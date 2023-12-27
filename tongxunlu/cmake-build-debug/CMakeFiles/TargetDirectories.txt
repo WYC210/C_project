@@ -1,4 +1,0 @@
-D:/app/code/CL/tongxunlu/cmake-build-debug/CMakeFiles/CMakeCCompilerId.dir
-D:/app/code/CL/tongxunlu/cmake-build-debug/CMakeFiles/main.dir
-D:/app/code/CL/tongxunlu/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/app/code/CL/tongxunlu/cmake-build-debug/CMakeFiles/rebuild_cache.dir
