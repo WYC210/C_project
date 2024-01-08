@@ -194,13 +194,15 @@ void updateMap(int player) {
     }
     // 将食物更新到地图上
     map[foodX][foodY] = FOOD;
-    // 在地图上生成墙
-    for (int i = 0; i <level ; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if(fangxiang == 0) {
-                map[wallX[i] + j][wallY[i]] = WALL;
-            } else{
-                map[wallX[i] ][wallY[i] + j] = WALL;
+    if(play == 2) {
+        // 在地图上生成墙
+        for (int i = 0; i < level; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                if (fangxiang == 0) {
+                    map[wallX[i] + j][wallY[i]] = WALL;
+                } else {
+                    map[wallX[i]][wallY[i] + j] = WALL;
+                }
             }
         }
     }
@@ -350,6 +352,9 @@ void move(int player) {
         // 处理用户输入
         if (_kbhit()) {
             input = _getch();
+            if (input == ESC) {
+                exit(0);
+            }
             if (input == SPACE) {
                 while (1) {
                     int put = _getch();
@@ -396,6 +401,9 @@ void move(int player) {
         // 处理用户输入
         if (_kbhit()) {
             input = _getch();
+            if (input == ESC) {
+                exit(0);
+            }
             if (input == SPACE) {
                 while (1) {
                     int put = _getch();
@@ -452,14 +460,15 @@ int check(int player) {
             snake[j]->head->score = snake[j]->head->score + 1;
             updateBody(j);
             Food(j);  // 生成新的食物
-            temp = level;
-            ++level;
-            for (int i = temp; i <level ; ++i) {
-                wallX[i] = rand() % (Height -1);
-                wallY[i] = rand() % (Long - 1);
-              fangxiang = rand() % 2;
+            if(play ==2) {
+                temp = level;
+                ++level;
+                for (int i = temp; i < level; ++i) {
+                    wallX[i] = rand() % (Height - 1);
+                    wallY[i] = rand() % (Long - 1);
+                    fangxiang = rand() % 2;
+                }
             }
-
         }
         //检测蛇头是否撞到了生成的墙
         if (play == 0 && number == 1) {
@@ -489,14 +498,14 @@ void menu() {
     switch (dec) {
         case 1:
             play = 0; // 单人模式
-            printf("选择你的地图大小\n");
+
 
             break;
         case 2:
             play = 1; // 双人模式
             break;
         case 0:
-            play = 2; // 自定义模式（添加您自己的逻辑）
+            play = 2; // 自定义模式
             number = 1;//第几关
             break;
         case 4:
@@ -507,31 +516,36 @@ void menu() {
             break;
     }
 }
-
+void tips(){
+    gotoxy(130,0);
+    printf("WASD/方向键：移动 | space/空格：暂停 | Esc：结束");
+}
 int main() {
     //隐藏关标
     CONSOLE_CURSOR_INFO cursor_info = {1, 0};
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor_info);
     char dec;
-    menu();
-    HideCursor();
+    menu();//菜单选择
+    HideCursor();//隐藏光标
+
     srand(time(NULL));  // 设置随机种子
     for (int k = 0; k <= play; ++k) {//根据选择的模式初始化对应的数据
         if (play == 1 && k == 0 || play == 2 && k == 0 || play == 2 && k == 1) {//跳过单人模式
             continue;
         }
-        intSnake(k);
-        Food(k);
-        updateMap(k);
-        while (check(k) == 0) {
+        intSnake(k);//初始化蛇
+        Food(k);//生成食物
+        updateMap(k);//更新地图
+        while (check(k) == 0) {//当检查满足死亡条件循环结束
 
-            for (int i = 0; i < 10; ++i) {
-                move(k);
+            for (int i = 0; i < 10; ++i) {//重复接收十次移动指令防止一次按太多下导致缓存问题
+                move(k);//接收移动
             }
-            algorithm(k);
-            updateMap(k);
-            out();
-            Sleep(80);
+            algorithm(k);//根据接收处理移动逻辑
+            updateMap(k);//移动后更新地图
+            out();//输出蛇图像
+            tips();//侧栏提示
+            Sleep(80);//暂停80防止移动太快
         }
     }
     // 游戏结束处理
